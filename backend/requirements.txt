@@ -11,3 +11,5 @@ whitenoise
 drf-yasg
 django-cleanup
 dj-database-url
+supabase
+django-storages

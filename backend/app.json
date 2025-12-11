@@ -1,0 +1,48 @@
+{
+  "name": "atelier-spaces-nate",
+  "description": "Atelier Spaces Nate - Architecture & Design Portfolio",
+  "keywords": ["django", "react", "architecture", "portfolio"],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "Django secret key for cryptographic signing",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "description": "Django debug mode (should be False in production)",
+      "value": "False"
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "Django settings module to use",
+      "value": "api.settings_production"
+    },
+    "DATABASE_URL": {
+      "description": "Supabase PostgreSQL database URL",
+      "required": true
+    },
+    "SUPABASE_URL": {
+      "description": "Supabase project URL",
+      "required": true
+    },
+    "SUPABASE_KEY": {
+      "description": "Supabase anon/public API key",
+      "required": true
+    },
+    "SUPABASE_BUCKET": {
+      "description": "Supabase storage bucket name",
+      "value": "atelier-media"
+    },
+    "ALLOWED_HOSTS": {
+      "description": "Comma-separated list of allowed hosts",
+      "required": true
+    },
+    "CORS_ALLOWED_ORIGINS": {
+      "description": "Comma-separated list of allowed CORS origins",
+      "required": true
+    }
+  }
+}

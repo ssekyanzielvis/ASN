@@ -6,11 +6,13 @@ A professional portfolio and studio management platform for a research-led desig
 
 This is a complete full-stack web application featuring:
 
-- **Backend**: Django REST Framework API with PostgreSQL
+- **Backend**: Django REST Framework API
 - **Frontend**: React + TypeScript with Tailwind CSS
+- **Database**: Supabase PostgreSQL
+- **Storage**: Supabase Storage for media files
 - **Authentication**: JWT-based authentication
 - **Design**: Minimalist black/white aesthetic
-- **Deployment**: Heroku (backend) + Vercel (frontend)
+- **Deployment**: Heroku (backend) + Netlify (frontend) + Supabase (database & storage)
 
 ## ✨ Features
 
@@ -159,69 +161,70 @@ Atelier-Spaces-Nate/
 - `POST /api/token/refresh/` - Refresh token
 - All CRUD operations for projects and news
 
-## Deployment
+## 🚀 Deployment
 
-### Backend Deployment (Heroku)
+This project is configured to deploy to:
+- **Backend**: Heroku (with Supabase for database and storage)
+- **Frontend**: Netlify
+- **Database**: Supabase PostgreSQL
+- **File Storage**: Supabase Storage
 
-1. Install Heroku CLI
-2. Login to Heroku:
-```bash
-heroku login
+### Quick Deploy
+
+Run the automated deployment script:
+```powershell
+.\deploy.ps1
 ```
 
-3. Create app:
-```bash
-heroku create atelier-spaces-nate-api
+This will guide you through deploying both frontend and backend.
+
+### Manual Deployment
+
+#### Option 1: Automated Scripts
+```powershell
+# Deploy backend to Heroku
+.\deploy-heroku.ps1
+
+# Deploy frontend to Netlify
+.\deploy-netlify.ps1
 ```
 
-4. Add PostgreSQL:
-```bash
-heroku addons:create heroku-postgresql:hobby-dev
-```
+#### Option 2: Step-by-Step
 
-5. Set environment variables:
-```bash
-heroku config:set SECRET_KEY=your-secret-key
-heroku config:set DEBUG=False
-heroku config:set ALLOWED_HOSTS=your-domain.herokuapp.com
-```
+**1. Supabase Setup (2 minutes)**
+- Create project at https://app.supabase.com
+- Create storage bucket: `atelier-media` (public)
+- Get credentials from Settings → API
 
-6. Deploy:
+**2. Backend (Heroku)**
 ```bash
+cd backend
+heroku create your-app-name
+heroku config:set SECRET_KEY="..." DATABASE_URL="..." SUPABASE_URL="..." SUPABASE_KEY="..."
 git push heroku main
-```
-
-7. Run migrations:
-```bash
 heroku run python manage.py migrate
 heroku run python manage.py createsuperuser
 ```
 
-### Frontend Deployment (Vercel)
-
-1. Install Vercel CLI:
-```bash
-npm i -g vercel
-```
-
-2. Login:
-```bash
-vercel login
-```
-
-3. Deploy:
+**3. Frontend (Netlify)**
 ```bash
 cd frontend
-vercel
+netlify init
+netlify env:set REACT_APP_API_URL "https://your-app.herokuapp.com/api"
+netlify deploy --prod
 ```
 
-4. Set environment variable in Vercel dashboard:
-- `REACT_APP_API_URL` = Your Heroku API URL
-
-5. Deploy to production:
+**4. Update CORS**
 ```bash
-vercel --prod
+heroku config:set CORS_ALLOWED_ORIGINS="https://your-site.netlify.app,http://localhost:3000"
 ```
+
+### Deployment Documentation
+
+- **📖 Full Guide**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - Comprehensive deployment instructions
+- **⚡ Quick Reference**: [QUICK_DEPLOY.md](QUICK_DEPLOY.md) - Fast deployment steps
+- **✅ Checklist**: [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) - Step-by-step checklist
+- **⚙️ Configuration**: [DEPLOYMENT_CONFIG.md](DEPLOYMENT_CONFIG.md) - Technical configuration details
 
 ## Design System
 
