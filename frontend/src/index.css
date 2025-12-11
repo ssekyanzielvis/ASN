@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body bg-pure-white text-dark-gray-2 antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-pure-black;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn-primary {
+    @apply bg-pure-black text-pure-white px-6 py-3 font-medium transition-all duration-300 hover:bg-dark-gray-1;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-pure-black text-pure-black px-6 py-3 font-medium transition-all duration-300 hover:bg-pure-black hover:text-pure-white;
+  }
+  
+  .card {
+    @apply bg-pure-white border border-dark-gray-3 border-opacity-20 transition-shadow duration-300 hover:shadow-xl;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-dark-gray-3 border-opacity-30 focus:outline-none focus:border-pure-black transition-colors;
+  }
+}
