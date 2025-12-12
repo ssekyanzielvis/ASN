@@ -21,7 +21,11 @@ DATABASES = {
 }
 
 # CORS
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = [
+    origin.strip() 
+    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', 'https://atelierspacesnet.netlify.app').split(',')
+    if origin.strip()
+]
 
 # Static files (using WhiteNoise)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
