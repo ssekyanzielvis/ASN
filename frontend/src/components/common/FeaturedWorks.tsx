@@ -8,11 +8,30 @@ const FeaturedWorks = () => {
   const { data: works, isLoading, error } = useQuery({
     queryKey: ['featured-works'],
     queryFn: workService.getFeatured,
+    retry: 1,
   });
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message="Failed to load featured works" />;
-  if (!works || works.length === 0) return null;
+  if (error) {
+    console.error('[FeaturedWorks] Error loading works:', error);
+    // Return error message but allow page to continue loading
+    return <ErrorMessage message="Failed to load featured works" error={error} />;
+  }
+  if (!works || works.length === 0) {
+    // Show empty state instead of hiding section
+    return (
+      <section className="py-16 px-4 md:px-8 lg:px-16 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-serif text-black mb-4">
+            Featured Works
+          </h2>
+          <p className="text-gray-600 text-lg">
+            No featured works available yet. Check back soon!
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 px-4 md:px-8 lg:px-16 bg-white">

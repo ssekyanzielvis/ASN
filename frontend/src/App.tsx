@@ -14,6 +14,7 @@ import WorkDetailPage from './pages/Works/WorkDetailPage';
 import WorksByCategoryPage from './pages/Works/WorksByCategoryPage';
 import TeamPage from './pages/Team/TeamPage';
 import TeamMemberDetailPage from './pages/Team/TeamMemberDetailPage';
+import NetworkStatus from './components/common/NetworkStatus';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -46,6 +47,8 @@ function App() {
             <Route path="contact" element={<ContactPage />} />
           </Route>
         </Routes>
+        {/* Network Status Monitor - Shows connection issues */}
+        <NetworkStatus />
       </Router>
     </QueryClientProvider>
   );

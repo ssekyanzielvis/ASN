@@ -10,6 +10,7 @@ const HeroSlider = () => {
   const { data: slides, isLoading, error } = useQuery({
     queryKey: ['hero-slides'],
     queryFn: heroSlideService.getAll,
+    retry: 1, // Retry once on failure
   });
 
   // Auto-advance slides every 5 seconds
@@ -24,8 +25,21 @@ const HeroSlider = () => {
   }, [slides]);
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message="Failed to load hero images" />;
-  if (!slides || slides.length === 0) return null;
+  if (error) {
+    console.error('[HeroSlider] Error loading slides:', error);
+    return <ErrorMessage message="Failed to load hero slides" error={error} />;
+  }
+  if (!slides || slides.length === 0) {
+    // Show placeholder when no slides
+    return (
+      <div className="w-full h-[60vh] md:h-[70vh] lg:h-[80vh] bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Atelier Spaces Nate</h1>
+          <p className="text-xl text-gray-300">Architecture • Design • Innovation</p>
+        </div>
+      </div>
+    );
+  }
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
