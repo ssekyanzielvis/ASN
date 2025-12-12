@@ -27,22 +27,22 @@ Your Atelier Spaces Nate project is now fully configured for deployment!
 - ✅ `supabase` - Python client for Supabase
 - ✅ `django-storages` - Storage backend framework
 - ✅ Production settings updated for Supabase storage
-
+postgresql://postgres.[PROJECT_ID]:[PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres
 ## 🚀 How to Deploy
-
+Su4at3#0ssekyanzi
 ### Option 1: Automated (Recommended)
 ```powershell
 # Run the master deployment script
 .\deploy.ps1
 ```
-
+postgresql://postgres:Su4at3#0ssekyanzi@db.abcdefghijklmnopqrst.supabase.co:5432/postgres
 This interactive script will:
 1. Check all prerequisites
 2. Guide you through Supabase setup
 3. Deploy backend to Heroku
 4. Deploy frontend to Netlify
 5. Configure all settings automatically
-
+postgresql://postgres:Su4at3#0ssekyanzi@db.loetbmdkawhlkamtqjij.supabase.co:5432/postgres
 ### Option 2: Individual Components
 ```powershell
 # Deploy backend only
