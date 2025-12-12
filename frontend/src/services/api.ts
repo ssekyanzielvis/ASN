@@ -1,5 +1,8 @@
 import { apiClient } from './apiClient';
-import { Project, NewsArticle, Category, Collaboration, SiteSettings, AuthTokens } from '../types';
+import { 
+  Project, NewsArticle, Category, Collaboration, SiteSettings, AuthTokens,
+  HeroSlide, WorkCategory, Work, TeamMember, AboutSection, SloganSection
+} from '../types';
 
 // Projects
 export const projectService = {
@@ -80,4 +83,39 @@ export const authService = {
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem('access_token');
   },
+};
+
+// Hero Slides
+export const heroSlideService = {
+  getAll: () => apiClient.get<HeroSlide[]>('/hero-slides/'),
+};
+
+// Work Categories
+export const workCategoryService = {
+  getAll: () => apiClient.get<WorkCategory[]>('/work-categories/'),
+  getByName: (name: string) => apiClient.get<WorkCategory>(`/work-categories/${name}/`),
+};
+
+// Works
+export const workService = {
+  getAll: (params?: any) => apiClient.get<Work[]>('/works/', params),
+  getBySlug: (slug: string) => apiClient.get<Work>(`/works/${slug}/`),
+  getFeatured: () => apiClient.get<Work[]>('/works/featured/'),
+  getByCategory: (category: string) => apiClient.get<Work[]>(`/works/by_category/?category=${category}`),
+};
+
+// Team Members
+export const teamService = {
+  getAll: () => apiClient.get<TeamMember[]>('/team-members/'),
+  getById: (id: number) => apiClient.get<TeamMember>(`/team-members/${id}/`),
+};
+
+// About Section
+export const aboutService = {
+  get: () => apiClient.get<AboutSection>('/about/current/'),
+};
+
+// Slogan Section
+export const sloganService = {
+  get: () => apiClient.get<SloganSection>('/slogan/current/'),
 };

@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Category, Project, NewsArticle, Collaboration, SiteSettings
+from .models import (
+    Category, Project, NewsArticle, Collaboration, SiteSettings,
+    HeroSlide, WorkCategory, Work, TeamMember, AboutSection, SloganSection
+)
 from django.contrib.auth.models import User
 
 
@@ -111,3 +114,75 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             'linkedin': obj.linkedin_url,
             'facebook': obj.facebook_url,
         }
+
+
+class HeroSlideSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HeroSlide
+        fields = ['id', 'image', 'caption', 'is_active', 'display_order', 'created_at']
+
+
+class WorkCategorySerializer(serializers.ModelSerializer):
+    works_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = WorkCategory
+        fields = ['id', 'name', 'display_name', 'image', 'description', 
+                  'is_active', 'display_order', 'works_count']
+    
+    def get_works_count(self, obj):
+        return obj.works.filter(is_featured=False).count()
+
+
+class WorkListSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.display_name', read_only=True)
+    category_slug = serializers.CharField(source='category.name', read_only=True)
+    
+    class Meta:
+        model = Work
+        fields = ['id', 'title', 'slug', 'category_name', 'category_slug',
+                  'featured_image', 'description', 'is_featured', 'created_at']
+
+
+class WorkDetailSerializer(serializers.ModelSerializer):
+    category = WorkCategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=WorkCategory.objects.all(), source='category', write_only=True
+    )
+    gallery_images = serializers.SerializerMethodField()
+    related_works = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Work
+        fields = ['id', 'title', 'slug', 'category', 'category_id', 
+                  'featured_image', 'description', 'full_content',
+                  'image_1', 'image_2', 'image_3', 'image_4', 'gallery_images',
+                  'is_featured', 'display_order', 'related_works',
+                  'created_at', 'updated_at']
+    
+    def get_gallery_images(self, obj):
+        return obj.gallery_images
+    
+    def get_related_works(self, obj):
+        # Get other works in the same category
+        related = obj.category.works.exclude(id=obj.id)[:6]
+        return WorkListSerializer(related, many=True).data
+
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamMember
+        fields = ['id', 'name', 'role', 'bio', 'image', 'email', 
+                  'linkedin_url', 'website_url', 'is_active', 'display_order']
+
+
+class AboutSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutSection
+        fields = ['id', 'title', 'content', 'team_image', 'team_caption', 'updated_at']
+
+
+class SloganSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SloganSection
+        fields = ['id', 'text', 'is_active', 'updated_at']

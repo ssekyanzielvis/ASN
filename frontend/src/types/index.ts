@@ -93,3 +93,73 @@ export interface User {
   last_name: string;
   is_staff: boolean;
 }
+
+export interface HeroSlide {
+  id: number;
+  image: string;
+  caption: string;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+}
+
+export interface WorkCategory {
+  id: number;
+  name: string;
+  display_name: string;
+  image: string;
+  description: string;
+  is_active: boolean;
+  display_order: number;
+  works_count: number;
+}
+
+export interface Work {
+  id: number;
+  title: string;
+  slug: string;
+  category_name: string;
+  category_slug: string;
+  featured_image: string;
+  description: string;
+  full_content?: string;
+  image_1?: string;
+  image_2?: string;
+  image_3?: string;
+  image_4?: string;
+  gallery_images?: string[];
+  is_featured: boolean;
+  display_order: number;
+  related_works?: Work[];
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  email?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  is_active: boolean;
+  display_order: number;
+}
+
+export interface AboutSection {
+  id: number;
+  title: string;
+  content: string;
+  team_image?: string;
+  team_caption?: string;
+  updated_at: string;
+}
+
+export interface SloganSection {
+  id: number;
+  text: string;
+  is_active: boolean;
+  updated_at: string;
+}

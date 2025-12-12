@@ -8,6 +8,8 @@ const Header: React.FC = () => {
 
   const navLinks = [
     { path: '/', label: 'Home' },
+    { path: '/works', label: 'Works' },
+    { path: '/team', label: 'Team' },
     { path: '/projects', label: 'Projects' },
     { path: '/news', label: 'News' },
     { path: '/collaborate', label: 'Collaborate' },

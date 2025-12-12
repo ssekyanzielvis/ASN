@@ -17,7 +17,9 @@ from drf_yasg import openapi
 
 from core.views import (
     CategoryViewSet, ProjectViewSet, NewsArticleViewSet,
-    CollaborationViewSet, SiteSettingsViewSet
+    CollaborationViewSet, SiteSettingsViewSet, HeroSlideViewSet,
+    WorkCategoryViewSet, WorkViewSet, TeamMemberViewSet,
+    AboutSectionViewSet, SloganSectionViewSet
 )
 
 # API Schema for documentation
@@ -39,6 +41,12 @@ router.register(r'projects', ProjectViewSet, basename='project')
 router.register(r'news', NewsArticleViewSet, basename='news')
 router.register(r'collaborations', CollaborationViewSet, basename='collaboration')
 router.register(r'settings', SiteSettingsViewSet, basename='settings')
+router.register(r'hero-slides', HeroSlideViewSet, basename='hero-slide')
+router.register(r'work-categories', WorkCategoryViewSet, basename='work-category')
+router.register(r'works', WorkViewSet, basename='work')
+router.register(r'team-members', TeamMemberViewSet, basename='team-member')
+router.register(r'about', AboutSectionViewSet, basename='about')
+router.register(r'slogan', SloganSectionViewSet, basename='slogan')
 
 urlpatterns = [
     # Admin

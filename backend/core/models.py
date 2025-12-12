@@ -143,6 +143,184 @@ class Collaboration(models.Model):
         return f"{self.name} - {self.project_type}"
 
 
+class HeroSlide(models.Model):
+    """Dynamic hero images for homepage"""
+    image = models.ImageField(upload_to='hero/', help_text="Hero image (recommended: 1920x1080)")
+    caption = models.CharField(max_length=200, help_text="Short description/caption")
+    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0, help_text="Order of display (lower numbers first)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['display_order', '-created_at']
+        verbose_name = "Hero Slide"
+        verbose_name_plural = "Hero Slides"
+    
+    def __str__(self):
+        return f"Hero Slide: {self.caption[:50]}"
+
+
+class WorkCategory(models.Model):
+    """Categories for 'Other Works' section"""
+    CATEGORY_CHOICES = [
+        ('omweso', 'Omweso'),
+        ('kinsman', 'The Kinsman Challenge'),
+        ('design', 'Design'),
+        ('architecture', 'Architecture'),
+        ('royal_toast', 'The Royal Toast Games'),
+        ('art_projects', 'Nate Art Projects'),
+    ]
+    
+    name = models.CharField(max_length=100, choices=CATEGORY_CHOICES, unique=True)
+    display_name = models.CharField(max_length=100, help_text="Display name for the category")
+    image = models.ImageField(upload_to='categories/', help_text="Category featured image")
+    description = models.TextField(help_text="Brief description of this category")
+    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['display_order', 'display_name']
+        verbose_name = "Work Category"
+        verbose_name_plural = "Work Categories"
+    
+    def __str__(self):
+        return self.display_name
+
+
+class Work(models.Model):
+    """Individual works within categories"""
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    category = models.ForeignKey(WorkCategory, on_delete=models.CASCADE, related_name='works')
+    featured_image = models.ImageField(upload_to='works/', help_text="Main work image")
+    description = models.TextField(help_text="Description of the work")
+    full_content = models.TextField(blank=True, help_text="Detailed content (optional)")
+    
+    # Additional images
+    image_1 = models.ImageField(upload_to='works/gallery/', blank=True, null=True)
+    image_2 = models.ImageField(upload_to='works/gallery/', blank=True, null=True)
+    image_3 = models.ImageField(upload_to='works/gallery/', blank=True, null=True)
+    image_4 = models.ImageField(upload_to='works/gallery/', blank=True, null=True)
+    
+    is_featured = models.BooleanField(default=False, help_text="Show in Featured Works section")
+    display_order = models.IntegerField(default=0)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['display_order', '-created_at']
+        verbose_name = "Work"
+        verbose_name_plural = "Works"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.title} ({self.category.display_name})"
+    
+    @property
+    def gallery_images(self):
+        """Return list of gallery images"""
+        images = []
+        for i in range(1, 5):
+            img = getattr(self, f'image_{i}')
+            if img:
+                images.append(img.url)
+        return images
+
+
+class TeamMember(models.Model):
+    """Team member profiles"""
+    name = models.CharField(max_length=200)
+    role = models.CharField(max_length=100, help_text="Position/role in the team")
+    bio = models.TextField(help_text="Member biography")
+    image = models.ImageField(upload_to='team/', help_text="Member photo")
+    
+    # Social links (optional)
+    email = models.EmailField(blank=True)
+    linkedin_url = models.URLField(blank=True)
+    website_url = models.URLField(blank=True)
+    
+    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['display_order', 'name']
+        verbose_name = "Team Member"
+        verbose_name_plural = "Team Members"
+    
+    def __str__(self):
+        return f"{self.name} - {self.role}"
+
+
+class AboutSection(models.Model):
+    """About Us section content"""
+    title = models.CharField(max_length=200, default="About Us")
+    content = models.TextField(help_text="About us content (supports markdown)")
+    team_image = models.ImageField(upload_to='about/', blank=True, null=True, 
+                                    help_text="Group photo of the team")
+    team_caption = models.TextField(blank=True, help_text="Caption for team image")
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "About Section"
+        verbose_name_plural = "About Section"
+    
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        # Prevent deletion
+        pass
+    
+    @classmethod
+    def load(cls):
+        """Load the singleton instance"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+    
+    def __str__(self):
+        return "About Section"
+
+
+class SloganSection(models.Model):
+    """Slogan/Quote section for homepage"""
+    text = models.TextField(default="…imagine the kind that has no limits, from which invisible ideas are turned into things people can touch, see, hear and feel…")
+    is_active = models.BooleanField(default=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Slogan Section"
+        verbose_name_plural = "Slogan Section"
+    
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        # Prevent deletion
+        pass
+    
+    @classmethod
+    def load(cls):
+        """Load the singleton instance"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+    
+    def __str__(self):
+        return "Slogan Section"
+
+
 class SiteSettings(models.Model):
     """Site-wide settings (singleton model)"""
     site_title = models.CharField(max_length=200, default="Atelier Spaces Nate")

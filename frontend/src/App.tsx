@@ -9,6 +9,11 @@ import NewsPage from './pages/News/NewsPage';
 import NewsDetailPage from './pages/News/NewsDetailPage';
 import CollaboratePage from './pages/Collaborate/CollaboratePage';
 import ContactPage from './pages/Contact/ContactPage';
+import WorksPage from './pages/Works/WorksPage';
+import WorkDetailPage from './pages/Works/WorkDetailPage';
+import WorksByCategoryPage from './pages/Works/WorksByCategoryPage';
+import TeamPage from './pages/Team/TeamPage';
+import TeamMemberDetailPage from './pages/Team/TeamMemberDetailPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -28,6 +33,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path="works" element={<WorksPage />} />
+            <Route path="works/:slug" element={<WorkDetailPage />} />
+            <Route path="works/category/:category" element={<WorksByCategoryPage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="team/:id" element={<TeamMemberDetailPage />} />
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="projects/:slug" element={<ProjectDetailPage />} />
             <Route path="news" element={<NewsPage />} />

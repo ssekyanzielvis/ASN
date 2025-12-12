@@ -1,53 +1,36 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { projectService, settingsService } from '../../services/api';
-import ProjectCard from '../../components/projects/ProjectCard';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
-import ErrorMessage from '../../components/common/ErrorMessage';
+import HeroSlider from '../../components/common/HeroSlider';
+import FeaturedWorks from '../../components/common/FeaturedWorks';
+import SloganBanner from '../../components/common/SloganBanner';
+import WorkCategoriesGrid from '../../components/common/WorkCategoriesGrid';
+import AboutSection from '../../components/common/AboutSection';
+import TeamSection from '../../components/common/TeamSection';
 
 const HomePage: React.FC = () => {
-  const { data: featuredProjects, isLoading: projectsLoading, error: projectsError } = useQuery({
-    queryKey: ['featuredProjects'],
-    queryFn: () => projectService.getFeatured(),
-  });
-
-  const { data: settings, isLoading: settingsLoading } = useQuery({
-    queryKey: ['settings'],
-    queryFn: () => settingsService.get(),
-  });
-
-  if (projectsLoading || settingsLoading) return <LoadingSpinner />;
-  if (projectsError) return <ErrorMessage message="Failed to load content" />;
-
   return (
     <div className="animate-fade-in">
-      {/* Hero Section */}
-      <section className="bg-pure-black text-pure-white py-24 md:py-32">
-        <div className="container-custom">
-          <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 leading-tight">
-            {settings?.site_title || 'Atelier Spaces Nate'}
-          </h1>
-          <p className="text-xl md:text-2xl text-dark-gray-3 max-w-3xl">
-            {settings?.tagline || 'A research-led design studio working with form, systems, and cultural intelligence'}
-          </p>
-        </div>
-      </section>
+      {/* Dynamic Hero Slider */}
+      <HeroSlider />
 
-      {/* Founder Quote Section */}
-      {settings?.founder_quote && (
-        <section className="py-16 md:py-24 bg-off-white">
-          <div className="container-custom">
-            <blockquote className="text-3xl md:text-4xl font-display italic text-pure-black text-center max-w-4xl mx-auto">
-              "{settings.founder_quote}"
-            </blockquote>
-          </div>
-        </section>
-      )}
+      {/* Featured Works Section */}
+      <FeaturedWorks />
 
-      {/* Featured Projects Section */}
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
+      {/* Slogan Banner */}
+      <SloganBanner />
+
+      {/* Work Categories Grid */}
+      <WorkCategoriesGrid />
+
+      {/* About Section */}
+      <AboutSection />
+
+      {/* Team Section */}
+      <TeamSection />
+    </div>
+  );
+};
+
+export default HomePage;
           <div className="flex justify-between items-center mb-12">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-pure-black">
               Featured Work

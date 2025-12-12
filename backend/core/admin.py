@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Project, NewsArticle, Collaboration, SiteSettings
+from .models import (
+    Category, Project, NewsArticle, Collaboration, SiteSettings,
+    HeroSlide, WorkCategory, Work, TeamMember, AboutSection, SloganSection
+)
 
 
 @admin.register(Category)
@@ -115,4 +118,122 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     
     def has_delete_permission(self, request, obj=None):
         # Prevent deletion
+        return False
+
+
+@admin.register(HeroSlide)
+class HeroSlideAdmin(admin.ModelAdmin):
+    list_display = ['caption', 'is_active', 'display_order', 'image_preview', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    list_editable = ['is_active', 'display_order']
+    ordering = ['display_order', '-created_at']
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 100px; height: auto;" />', obj.image.url)
+        return '-'
+    image_preview.short_description = 'Preview'
+
+
+@admin.register(WorkCategory)
+class WorkCategoryAdmin(admin.ModelAdmin):
+    list_display = ['display_name', 'name', 'is_active', 'display_order', 'works_count']
+    list_filter = ['is_active', 'name']
+    list_editable = ['is_active', 'display_order']
+    search_fields = ['display_name', 'description']
+    ordering = ['display_order', 'display_name']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'display_name', 'description', 'image')
+        }),
+        ('Display Options', {
+            'fields': ('is_active', 'display_order')
+        }),
+    )
+    
+    def works_count(self, obj):
+        count = obj.works.count()
+        return format_html('<strong>{}</strong>', count)
+    works_count.short_description = 'Works'
+
+
+@admin.register(Work)
+class WorkAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'is_featured', 'display_order', 'created_at']
+    list_filter = ['category', 'is_featured', 'created_at']
+    search_fields = ['title', 'description', 'full_content']
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ['is_featured', 'display_order']
+    ordering = ['display_order', '-created_at']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'slug', 'category', 'description', 'full_content')
+        }),
+        ('Images', {
+            'fields': ('featured_image', 'image_1', 'image_2', 'image_3', 'image_4')
+        }),
+        ('Display Options', {
+            'fields': ('is_featured', 'display_order')
+        }),
+    )
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('category')
+
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ['name', 'role', 'is_active', 'display_order', 'email']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'role', 'bio']
+    list_editable = ['is_active', 'display_order']
+    ordering = ['display_order', 'name']
+    
+    fieldsets = (
+        ('Personal Information', {
+            'fields': ('name', 'role', 'bio', 'image')
+        }),
+        ('Contact & Social', {
+            'fields': ('email', 'linkedin_url', 'website_url')
+        }),
+        ('Display Options', {
+            'fields': ('is_active', 'display_order')
+        }),
+    )
+
+
+@admin.register(AboutSection)
+class AboutSectionAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('Content', {
+            'fields': ('title', 'content')
+        }),
+        ('Team Image', {
+            'fields': ('team_image', 'team_caption')
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        return not AboutSection.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(SloganSection)
+class SloganSectionAdmin(admin.ModelAdmin):
+    list_display = ['text_preview', 'is_active', 'updated_at']
+    list_editable = ['is_active']
+    
+    def text_preview(self, obj):
+        return obj.text[:100] + '...' if len(obj.text) > 100 else obj.text
+    text_preview.short_description = 'Slogan Text'
+    
+    def has_add_permission(self, request):
+        return not SloganSection.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
         return False
