@@ -11,12 +11,20 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
-# Database
+# Database - Supabase PostgreSQL
 import dj_database_url
+
+# Use Supabase PostgreSQL database
+DATABASE_URL = os.environ.get(
+    'DATABASE_URL',
+    'postgresql://postgres.loetbmdkawhlkamtqjij:Su4at3#0ssekyanzi@aws-0-eu-west-2.pooler.supabase.com:6543/postgres'
+)
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -31,12 +39,17 @@ CORS_ALLOWED_ORIGINS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (using Supabase Storage)
-if os.environ.get('SUPABASE_URL') and os.environ.get('SUPABASE_KEY'):
+# Supabase Configuration
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://loetbmdkawhlkamtqjij.supabase.co')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET', 'atelier-media')
+
+# Media files - Always use Supabase Storage in production
+if SUPABASE_URL and SUPABASE_KEY:
     DEFAULT_FILE_STORAGE = 'utils.supabase_storage.SupabaseStorage'
-    MEDIA_URL = f"{os.environ.get('SUPABASE_URL')}/storage/v1/object/public/{os.environ.get('SUPABASE_BUCKET', 'atelier-media')}/"
+    MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/"
 else:
-    # Fallback to local storage for development
+    # Fallback to local storage if Supabase not configured
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

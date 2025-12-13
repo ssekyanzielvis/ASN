@@ -138,9 +138,18 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Supabase Configuration (for development)
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET', 'atelier-media')
+
+# Media files - Use Supabase Storage if configured, otherwise local
+if SUPABASE_URL and SUPABASE_KEY:
+    DEFAULT_FILE_STORAGE = 'utils.supabase_storage.SupabaseStorage'
+    MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/"
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
